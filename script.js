@@ -1,6 +1,5 @@
 // declaring starting variables
-var buttons = ["Counter Strike", "Skyrim", "Hitman", "Dark Souls"];
-var userInput = $("#newButton").val();
+var buttons = ["CSGO", "Skyrim", "Hitman", "Dark Souls"];
 
 function displayButtons() {
   for (i = 0; i < buttons.length; i++) {
@@ -18,8 +17,13 @@ displayButtons();
 
 $("#submitButton").on("click", function() {
   event.preventDefault();
+
+  var userInput = $("#newButton")
+    .val()
+    .trim();
+
   buttons.push(userInput);
-  $('#gifButtons').empty();
+  $("#gifButtons").empty();
   displayButtons();
 });
 
@@ -44,14 +48,31 @@ $(".gifButtons").on("click", function() {
       var rating = $("<p>").text("Rated " + response.data[j].rating);
       var gifSpot = $("<img>");
 
-      gifSpot
-        .attr("href", response.data[j].original_still_url)
-        .attr("data-still", response.data[j].original_still_url)
-        .attr("data-animate", response.data[j].original_url)
-        .attr("data-state", "still");
+      console.log(response.data[j].url);
 
-      newDiv.append(rating).append(response.data[j].original_still_url);
+      gifSpot.attr("src", response.data[j].images.original_still.url);
+      gifSpot.attr("data-still", response.data[j].images.original_still.url);
+      gifSpot.attr("data-animate", response.data[j].images.original.url);
+      gifSpot.attr("data-state", "still");
+      gifSpot.attr("class", "gif");
+
+      newDiv.append(rating);
+      newDiv.append(gifSpot);
       $("#gifContainer").append(newDiv);
     }
   });
+});
+
+$(document).on("click", ".gif", function playPause() {
+  var state = $(this).attr("data-state");
+  var play = $(this).attr("data-animate");
+  var pause = $(this).attr("data-still");
+
+  if (state === "still") {
+    $(this).attr("src", play);
+    $(this).attr("data-state", "animate");
+  } else if (state === "animate") {
+    $(this).attr("src", pause);
+    $(this).attr("data-state", "still");
+  }
 });
